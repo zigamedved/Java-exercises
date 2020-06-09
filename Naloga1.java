@@ -9,15 +9,11 @@ public class Naloga1{
     public static FileWriter izhod;
     public static PrintWriter printWriter;
 
-    //mozni pomiki, za iterativni nacin...
-    //desnoGor
     public static int xdG=-1;
     public static int ydG=1;
-    //levoGor
     public static int xlG=-1;
     public static int ylG=-1;
-    //gor
-
+    
     public static int gorx=-1;
     public static int gory=0;
     //desno
@@ -36,7 +32,7 @@ public class Naloga1{
     public static int dolLx=1;
     public static int dolLy=-1;
 
-
+    //sort
     static void uredi(String[] s,String[] s2){
         int n=s.length;
          for(int i = 1; i<n;i++){
@@ -51,38 +47,31 @@ public class Naloga1{
              s2[j+1]=temp;
          }
     }
+    
     public static void main(String[] args) throws IOException{
         long start = System.currentTimeMillis();
 
         String vh = "C:\\Users\\ZIGA MEDVED\\Desktop\\APS1-Seminarska1\\Naloga1\\I1_9.txt";
-        //String vh=args[0];
         String iz = "C:\\Users\\ZIGA MEDVED\\Desktop\\APS1-Seminarska1\\Naloga1\\test.txt";
-        //String iz=args[1];
-        
+       
         //za testiranje je odprt samo ta vhod
-        //BufferedReader tok = new BufferedReader(new FileReader("C:\\Users\\ZIGA MEDVED\\Desktop\\APS1-Seminarska1\\Naloga1\\I1_2.txt"));
         BufferedReader tok = new BufferedReader(new FileReader(vh));
         //izhod = new FileWriter("C:\\Users\\ZIGA MEDVED\\Desktop\\APS1-Seminarska1\\Naloga1\\izhod_2.txt");
         izhod = new FileWriter(iz);
         printWriter = new PrintWriter(izhod);
 
         String vrstica;
-        
-        
         vrstica=tok.readLine();
         String[] dimenzije=vrstica.split(",");
         
-        //shranim si dimenzije tabele
         //System.out.print(dimenzije[0]+dimenzije[1]);
         int visina = Integer.parseInt(dimenzije[0]);
         int sirina = Integer.parseInt(dimenzije[1]);
 
         //globalna mreza crk za popravljanje rekurzije...
         rezerva=new char[visina][sirina];
-        //tabela crk, ki jih iscem in jo tudi manipuliram
         crke=new char[visina][sirina];
         
-        //napolnim tabelo crk
         for(int i = 0; i<visina;i++){
             vrstica=tok.readLine();
             String[] trenutnaVrstica=vrstica.split(",");
@@ -93,8 +82,7 @@ public class Naloga1{
 
         }
 
-        
-        //preberem stevilo besed, koliko jih moram najti
+        //preberem stevilo besed
         vrstica=tok.readLine();
         int steviloBesed=Integer.parseInt(vrstica);
         //System.out.print(steviloBesed);
@@ -108,23 +96,17 @@ public class Naloga1{
             rezervaBesed[i]=besede[i];
         }
 
-     
-        //posortira besede...
         uredi(besede,rezervaBesed);
         
-
-        //KLIC REKURZIJE...
-        //zbrisou sm pousod crke
-
+        //glavni del programa
         rekurzija(0,besede);
       
-
         tok.close();
         printWriter.close();
 
         long end = System.currentTimeMillis();
-
-        //System.out.println("Execution speed "+ (end - start)+" ms\n");
+        //cas izvajanja programa    
+        System.out.println("Execution speed "+ (end - start)+" ms\n");
     }
 
     //rekurzija za iskanje po tabeli besed...
@@ -143,20 +125,16 @@ public class Naloga1{
         /*KLICANJE REKURZIJE, KI ISCE MOZNE KOMBINACIJE, PODATI MORAM TRENUTNO
         BESEDO IN MREZO...
         */
-            //nevem tocno
             for(int k = 0; k<crke.length;k++){
                 for(int j = 0; j<crke[k].length;j++){
                     if(crke[k][j]==besede[i].charAt(0)){
                         if(poisci(besede[i],k,j,0)){//0 ali 1
-                            //damo nek flag, da imamo resitev
                             besede[i]="imam";
                             if(rekurzija(i+1,besede)){
                                 return true;
                             }
                             //besede[i]=rezervaBesed[i];
-
                         }
-                        
                     }
                     //continue;
                 }
@@ -172,15 +150,9 @@ public class Naloga1{
     
     //v rekurziji grem zdaj crko po crko PO BESEDI, v rekurzijo dobim celo besedo...
     //prvi klic: koordinati, kjer najdemo prvo crko,znakBesede = 0;
-
     public static boolean poisci(String beseda,int x,int y,int znakBesede){
-
-        //pomik desno gor
-        //int x1=x, int y1=y; sprot neses dva inta na konc sprintas...
-
         if(rekurzijaDesnoGor(beseda,x,y,znakBesede,x,y)){
             //System.out.println("prva koordinata besede: "+beseda+" je: "+x+","+y);
-            
             return true;
         }
         //pomik levo gor
@@ -218,10 +190,7 @@ public class Naloga1{
             //System.out.println("prva koordinata besede: "+beseda+" je: "+x+","+y);
             return true;
         }
-        
-
         return false;
-
     }
 
     //prvi klic..... x,y koordinate kjer sm dobil crko in znakBesede=0, ter beseda...
@@ -244,21 +213,7 @@ public class Naloga1{
         if(beseda.charAt(znakBesede)==crke[x][y]  && ((beseda.length()-1)==znakBesede)){
         	//na tem mestu smo, je veljavno, torej oznacim
             crke[x][y]='.';
-
-            //System.out.println(" najdu besedo: "+beseda);
-            //System.out.print("porabljena crka:"+crke[x][y]+" nastavljena vrednost nazaj:"+crke[3][0]);
-
-            //System.out.println("najdu sm besedo: "+beseda+" prva koordinata je:"+x1+","+y1+" ; zadna koordinata je: "+x+","+y);
-            //System.out.println("najdu sm besedo: "+beseda);
-            //print writter u usako vrsto pa je...
             printWriter.printf("%s,%d,%d,%d,%d\n",beseda,x1,y1,x,y);
-
-           /*
-            if(beseda.length()>1){
-                printWriter.printf("\n");
-
-            }*/
-            
             return true;
         }
         
@@ -266,13 +221,9 @@ public class Naloga1{
         if((beseda.length()==1) && (beseda.charAt(0)==crke[x][y])){
         	//na tem mestu smo, je veljavno, torej oznacim
             crke[x][y]='.';
-            //System.out.print("najdu znak: "+beseda);
             printWriter.printf("%s,%d,%d,%d,%d\n",beseda,x1,y1,x,y);
             return true;
         }
-        
-        //ujemanje crke, moramo se naprej...
-        //System.out.print("crke[x][y]: "+crke[x][y]+"znak besede pa je: "+beseda.charAt(znakBesede));
         
         if(crke[x][y]==beseda.charAt(znakBesede)){
         	//na tem mestu smo, je veljavno, torej oznacim
@@ -288,18 +239,13 @@ public class Naloga1{
             }
             	
         }
-
-
         crke[x][y]=rezerva[x][y];
-        
-        
         return false;
 
     }
     
     public static boolean rekurzijaGor(String beseda, int x, int y, int znakBesede,int x1, int y1){
         //preveri ali je X-koordinata veljavna,manj od 0 ali pa daljsa od meje
-        
         if(x<0 || x>=crke[0].length){
             return false;
 
@@ -349,21 +295,14 @@ public class Naloga1{
         }
 
         //ce nismo prisli do konca vse za nazaj razveljavimo in returnamo false;
-        
-
         crke[x][y]=rezerva[x][y];
-        
-        
         return false;
-
-        
     }
 
     public static boolean rekurzijaLevoGor(String beseda, int x, int y, int znakBesede,int x1,int y1){
         //preveri ali je X-koordinata veljavna,manj od 0 ali pa daljsa od meje
         if(x<0 || x>=crke[0].length){
             return false;
-
         }
         //preveri ali je Y-koordinata veljavna
         if(y<0 || y>=crke.length){
@@ -410,11 +349,7 @@ public class Naloga1{
         }
 
         //ce nismo prisli do konca vse za nazaj razveljavimo in returnamo false;
-        
-
         crke[x][y]=rezerva[x][y];
-        
-        
         return false;
     }
 
